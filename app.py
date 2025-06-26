@@ -1,17 +1,20 @@
-import os
 from flask import Flask, request, jsonify
-from phishing_detector import phishing_classifier
 
 app = Flask(__name__)
 
-@app.route("/scan", methods=["POST"])
+@app.route('/scan', methods=['POST'])
 def scan():
-    email = request.get_json()
-    if not email:
-        return jsonify({"error": "No email data provided"}), 400
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No data provided'}), 400
 
-    result = phishing_classifier(email)
-    return jsonify(result), 200
+    subject = data.get('subject', '')
+    body = data.get('body', '')
+    
+    # הדמיה של בדיקה פשוטה
+    is_phishing = 'click' in body.lower() or 'password' in body.lower()
+
+    return jsonify({'phishing': is_phishing})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
+    app.run(host='0.0.0.0', port=10000)
