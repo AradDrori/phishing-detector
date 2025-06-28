@@ -10,11 +10,11 @@ def scan():
 
     subject = data.get('subject', '')
     body = data.get('body', '')
-    
-    # הדמיה של בדיקה פשוטה
+
+    # סימולציה לבדיקה האם מדובר בפישינג
     is_phishing = 'click' in body.lower() or 'password' in body.lower()
 
     return jsonify({'phishing': is_phishing})
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
