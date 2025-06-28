@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 import os
 
+# מייבא את הפונקציה שכתבת בקובץ השני
+from phishing_detector import phishing_classifier
+
 app = Flask(__name__)
 
 @app.route("/scan", methods=["POST", "GET"])
@@ -9,20 +12,12 @@ def scan_email():
         return "OK", 200
 
     data = request.get_json()
-    if not data or "subject" not in data or "body" not in data:
-        return jsonify({"error": "Missing 'subject' or 'body' in request"}), 400
+    if not data or "subject" not in data or "body" not in data or "from" not in data:
+        return jsonify({"error": "Missing 'subject', 'body', or 'from' in request"}), 400
 
-    subject = data["subject"]
-    body = data["body"]
-
-    suspicious_keywords = ["click here", "reset your password", "verify your account", "bank account", "urgent"]
-    full_text = f"{subject} {body}".lower()
-    is_phishing = any(keyword in full_text for keyword in suspicious_keywords)
-
-    return jsonify({
-        "phishing": is_phishing,
-        "reason": "Suspicious keywords found" if is_phishing else "No suspicious content detected"
-    })
+    # מריץ את האלגוריתם המתקדם שלך
+    result = phishing_classifier(data)
+    return jsonify(result)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
